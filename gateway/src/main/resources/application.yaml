@@ -1,0 +1,41 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: gateway
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8181/realms/ynrgaming
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # 🔹 1) Auto-discovery for internal microservices (no need to write routes for each)
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+
+          # 🔹 2) Manual routing for public API exposure
+          routes:
+            - id: user-service-public
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/users/**
+              # optional (if user-service expects URL without "/users")
+              filters:
+               - StripPrefix=1
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
