@@ -1,0 +1,3 @@
+eureka:
+  instance:
+    hostname: your-domain-or-ip
